@@ -56,7 +56,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <goto-instrument/full_slicer.h>
 #include <goto-instrument/nondet_static.h>
-#include <goto-instrument/cover.h>
 
 #include <pointer-analysis/add_failed_symbols.h>
 
@@ -115,9 +114,6 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
 
   if(cmdline.isset("show-vcc"))
     options.set_option("show-vcc", true);
-
-  if(cmdline.isset("cover"))
-    parse_cover_options(cmdline, options);
 
   if(cmdline.isset("mm"))
     options.set_option("mm", cmdline.get_value("mm"));
@@ -206,14 +202,9 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
     options.set_option("error-label", cmdline.get_values("error-label"));
 
   // generate unwinding assertions
-  if(cmdline.isset("cover"))
-    options.set_option("unwinding-assertions", false);
-  else
-  {
-    options.set_option(
-      "unwinding-assertions",
-      cmdline.isset("unwinding-assertions"));
-  }
+  options.set_option(
+    "unwinding-assertions",
+    cmdline.isset("unwinding-assertions"));
 
   // generate unwinding assumptions otherwise
   options.set_option(
@@ -787,13 +778,6 @@ bool cbmc_parse_optionst::process_goto_program(
     // for coverage annotation:
     remove_skip(goto_model);
 
-    // instrument cover goals
-    if(cmdline.isset("cover"))
-    {
-      if(instrument_cover_goals(options, goto_model, get_message_handler()))
-        return true;
-    }
-
     // label the assertions
     // This must be done after adding assertions and
     // before using the argument of the "property" option.
@@ -811,7 +795,7 @@ bool cbmc_parse_optionst::process_goto_program(
         full_slicer(goto_model);
     }
 
-    // remove any skips introduced since coverage instrumentation
+    // remove any skips
     remove_skip(goto_model);
   }
 
@@ -924,7 +908,6 @@ void cbmc_parse_optionst::help()
     " --no-assertions              ignore user assertions\n"
     " --no-assumptions             ignore user assumptions\n"
     " --error-label label          check that label is unreachable\n"
-    " --cover CC                   create test-suite with coverage criterion CC\n" // NOLINT(*)
     " --mm MM                      memory consistency model for concurrent programs\n" // NOLINT(*)
     "\n"
     "Semantic transformations:\n"
