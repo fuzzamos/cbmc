@@ -46,9 +46,9 @@ LIBS =
 include ../config.inc
 include ../common
 
-CLEANFILES = cbmc$(EXEEXT)
+CLEANFILES = ccover$(EXEEXT)
 
-all: cbmc$(EXEEXT)
+all: ccover$(EXEEXT)
 
 ifneq ($(wildcard ../bv_refinement/Makefile),)
   OBJ += ../bv_refinement/bv_refinement$(LIBEXT)
@@ -62,10 +62,10 @@ endif
 
 ###############################################################################
 
-cbmc$(EXEEXT): $(OBJ)
+ccover$(EXEEXT): $(OBJ)
 	$(LINKBIN)
 
-.PHONY: cbmc-mac-signed
+.PHONY: ccover-mac-signed
 
-cbmc-mac-signed: cbmc$(EXEEXT)
-	strip cbmc$(EXEEXT) ; codesign -v -s $(OSX_IDENTITY) cbmc$(EXEEXT)
+ccover-mac-signed: ccover$(EXEEXT)
+	strip ccover$(EXEEXT) ; codesign -v -s $(OSX_IDENTITY) ccover$(EXEEXT)

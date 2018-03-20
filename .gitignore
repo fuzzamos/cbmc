@@ -92,6 +92,8 @@ src/memory-models/mm_y.tab.h
 # binaries
 src/cbmc/cbmc
 src/cbmc/cbmc.exe
+src/ccover/ccover
+src/ccover/ccover.exe
 src/cegis/cegis
 src/cegis/cegis.exe
 src/goto-analyzer/goto-analyzer
