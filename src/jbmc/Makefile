@@ -19,16 +19,6 @@ OBJ += ../ansi-c/ansi-c$(LIBEXT) \
       ../pointer-analysis/goto_program_dereference$(OBJEXT) \
       ../goto-instrument/full_slicer$(OBJEXT) \
       ../goto-instrument/nondet_static$(OBJEXT) \
-      ../goto-instrument/cover$(OBJEXT) \
-      ../goto-instrument/cover_basic_blocks$(OBJEXT) \
-      ../goto-instrument/cover_filter$(OBJEXT) \
-      ../goto-instrument/cover_instrument_branch$(OBJEXT) \
-      ../goto-instrument/cover_instrument_condition$(OBJEXT) \
-      ../goto-instrument/cover_instrument_decision$(OBJEXT) \
-      ../goto-instrument/cover_instrument_location$(OBJEXT) \
-      ../goto-instrument/cover_instrument_mcdc$(OBJEXT) \
-      ../goto-instrument/cover_instrument_other$(OBJEXT) \
-      ../goto-instrument/cover_util$(OBJEXT) \
       ../analyses/analyses$(LIBEXT) \
       ../langapi/langapi$(LIBEXT) \
       ../xmllang/xmllang$(LIBEXT) \
@@ -39,7 +29,6 @@ OBJ += ../ansi-c/ansi-c$(LIBEXT) \
       ../json/json$(LIBEXT) \
       ../cbmc/all_properties$(OBJEXT) \
       ../cbmc/bmc$(OBJEXT) \
-      ../cbmc/bmc_cover$(OBJEXT) \
       ../cbmc/bv_cbmc$(OBJEXT) \
       ../cbmc/cbmc_dimacs$(OBJEXT) \
       ../cbmc/cbmc_solvers$(OBJEXT) \
