@@ -14,24 +14,20 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/ui_message.h>
 #include <util/parse_options.h>
-#include <util/timestamper.h>
+//#include <util/timestamper.h>
 
 #include <langapi/language.h>
 
-#include <analyses/goto_check.h>
+//#include <analyses/goto_check.h>
 
-#include <goto-programs/goto_trace.h>
+#include <goto-programs/goto_model.h>
 
-#include "bmc.h"
-#include "xml_interface.h"
-#include "cbmc_solvers.h"
+#include <cbmc/bmc.h>
 
-class bmct;
-class goto_functionst;
 class optionst;
 
 // clang-format off
-#define CBMC_OPTIONS \
+#define CCOVER_OPTIONS \
   OPT_BMC \
   "(preprocess)(slice-by-trace):" \
   OPT_FUNCTIONS \
@@ -40,11 +36,9 @@ class optionst;
   "(document-subgoals)(outfile):(test-preprocessor)" \
   "D:I:(c89)(c99)(c11)(cpp98)(cpp03)(cpp11)" \
   "(object-bits):" \
-  OPT_GOTO_CHECK \
-  "(no-assertions)(no-assumptions)" \
-  "(no-built-in-assertions)" \
+  "(no-assumptions)" \
   "(xml-ui)(xml-interface)(json-ui)" \
-  "(smt1)(smt2)(fpa)(cvc3)(cvc4)(boolector)(yices)(z3)(opensmt)(mathsat)" \
+  "(smt2)(fpa)(cvc4)(boolector)(yices)(z3)(opensmt)(mathsat)" \
   "(no-sat-preprocessor)" \
   "(beautify)" \
   "(dimacs)(refine)(max-node-refinement):(refine-arrays)(refine-arithmetic)"\
@@ -58,8 +52,7 @@ class optionst;
   OPT_SHOW_PROPERTIES \
   "(show-symbol-table)(show-parse-tree)" \
   "(drop-unused-functions)" \
-  "(property):(stop-on-fail)(trace)" \
-  "(error-label):(verbosity):(no-library)" \
+  "(verbosity):(no-library)" \
   "(nondet-static)" \
   "(version)" \
   "(cover):(symex-coverage-report):" \
@@ -70,25 +63,19 @@ class optionst;
   "(arrays-uf-always)(arrays-uf-never)" \
   "(string-abstraction)(no-arch)(arch):" \
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
-  "(localize-faults)(localize-faults-method):" \
   OPT_GOTO_TRACE \
-  "(claim):(show-claims)(fixedbv)(floatbv)(all-claims)(all-properties)" // legacy, and will eventually disappear // NOLINT(whitespace/line_length)
+  "(fixedbv)"
 // clang-format on
 
-class cbmc_parse_optionst:
+class ccover_parse_optionst:
   public parse_options_baset,
-  public xml_interfacet,
   public messaget
 {
 public:
   virtual int doit() override;
   virtual void help() override;
 
-  cbmc_parse_optionst(int argc, const char **argv);
-  cbmc_parse_optionst(
-    int argc,
-    const char **argv,
-    const std::string &extra_options);
+  ccover_parse_optionst(int argc, const char **argv);
 
 protected:
   goto_modelt goto_model;

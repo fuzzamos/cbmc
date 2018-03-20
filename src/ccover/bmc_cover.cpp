@@ -9,7 +9,7 @@ Author: Daniel Kroening, kroening@kroening.com
 /// \file
 /// Test-Suite Generation with BMC
 
-#include "bmc.h"
+#include <cbmc/bmc.h>
 
 #include <chrono>
 #include <iomanip>
@@ -29,7 +29,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <langapi/language_util.h>
 
-#include "bv_cbmc.h"
+#include <cbmc/bv_cbmc.h>
 
 class bmc_covert:
   public cover_goalst::observert,

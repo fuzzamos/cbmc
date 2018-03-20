@@ -9,7 +9,7 @@ Author: Daniel Kroening, kroening@kroening.com
 /// \file
 /// CBMC Command Line Option Processing
 
-#include "cbmc_parse_options.h"
+#include "ccover_parse_options.h"
 
 #include <fstream>
 #include <cstdlib> // exit()
@@ -62,29 +62,16 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <langapi/mode.h>
 
-#include "version.h"
-#include "xml_interface.h"
+#include <cbmc/version.h>
 
-cbmc_parse_optionst::cbmc_parse_optionst(int argc, const char **argv):
-  parse_options_baset(CBMC_OPTIONS, argc, argv),
-  xml_interfacet(cmdline),
+ccover_parse_optionst::ccover_parse_optionst(int argc, const char **argv):
+  parse_options_baset(CCOVER_OPTIONS, argc, argv),
   messaget(ui_message_handler),
-  ui_message_handler(cmdline, "CBMC " CBMC_VERSION)
+  ui_message_handler(cmdline, "ccover " CBMC_VERSION)
 {
 }
 
-::cbmc_parse_optionst::cbmc_parse_optionst(
-  int argc,
-  const char **argv,
-  const std::string &extra_options):
-  parse_options_baset(CBMC_OPTIONS+extra_options, argc, argv),
-  xml_interfacet(cmdline),
-  messaget(ui_message_handler),
-  ui_message_handler(cmdline, "CBMC " CBMC_VERSION)
-{
-}
-
-void cbmc_parse_optionst::eval_verbosity()
+void ccover_parse_optionst::eval_verbosity()
 {
   // this is our default verbosity
   unsigned int v=messaget::M_STATISTICS;
@@ -99,7 +86,7 @@ void cbmc_parse_optionst::eval_verbosity()
   ui_message_handler.set_verbosity(v);
 }
 
-void cbmc_parse_optionst::get_command_line_options(optionst &options)
+void ccover_parse_optionst::get_command_line_options(optionst &options)
 {
   if(config.set(cmdline))
   {
@@ -185,9 +172,6 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
     options.set_option("propagation", false);
   else
     options.set_option("propagation", true);
-
-  // all checks supported by goto_check
-  PARSE_OPTIONS_GOTO_CHECK(cmdline, options);
 
   // check assertions
   if(cmdline.isset("no-assertions"))
@@ -412,7 +396,7 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
 }
 
 /// invoke main modules
-int cbmc_parse_optionst::doit()
+int ccover_parse_optionst::doit()
 {
   if(cmdline.isset("version"))
   {
@@ -546,7 +530,7 @@ int cbmc_parse_optionst::doit()
     options, goto_model, ui_message_handler.get_ui(), *this);
 }
 
-bool cbmc_parse_optionst::set_properties()
+bool ccover_parse_optionst::set_properties()
 {
   try
   {
@@ -578,7 +562,7 @@ bool cbmc_parse_optionst::set_properties()
   return false;
 }
 
-int cbmc_parse_optionst::get_goto_program(
+int ccover_parse_optionst::get_goto_program(
   const optionst &options)
 {
   if(cmdline.args.empty())
@@ -650,7 +634,7 @@ int cbmc_parse_optionst::get_goto_program(
   return -1; // no error, continue
 }
 
-void cbmc_parse_optionst::preprocessing()
+void ccover_parse_optionst::preprocessing()
 {
   try
   {
@@ -707,7 +691,7 @@ void cbmc_parse_optionst::preprocessing()
   }
 }
 
-bool cbmc_parse_optionst::process_goto_program(
+bool ccover_parse_optionst::process_goto_program(
   const optionst &options)
 {
   try
@@ -741,10 +725,6 @@ bool cbmc_parse_optionst::process_goto_program(
     remove_vector(goto_model);
     remove_complex(goto_model);
     rewrite_union(goto_model);
-
-    // add generic checks
-    status() << "Generic Property Instrumentation" << eom;
-    goto_check(options, goto_model);
 
     // checks don't know about adjusted float expressions
     adjust_float_expressions(goto_model);
@@ -844,16 +824,16 @@ bool cbmc_parse_optionst::process_goto_program(
 }
 
 /// display command line help
-void cbmc_parse_optionst::help()
+void ccover_parse_optionst::help()
 {
   // clang-format off
   std::cout <<
     "\n"
-    "* *   CBMC " CBMC_VERSION " - Copyright (C) 2001-2018 ";
+    "* *  ccover " CBMC_VERSION " - Copyright (C) 2001-2018 ";
 
   std::cout << "(" << (sizeof(void *)*8) << "-bit version)";
 
-  std::cout << "   * *\n";
+  std::cout << "  * *\n";
 
   std::cout <<
     "* *              Daniel Kroening, Edmund Clarke             * *\n"
@@ -863,15 +843,8 @@ void cbmc_parse_optionst::help()
     "\n"
     "Usage:                       Purpose:\n"
     "\n"
-    " cbmc [-?] [-h] [--help]      show help\n"
-    " cbmc file.c ...              source file names\n"
-    "\n"
-    "Analysis options:\n"
-    HELP_SHOW_PROPERTIES
-    " --symex-coverage-report f    generate a Cobertura XML coverage report in f\n" // NOLINT(*)
-    " --property id                only check one specific property\n"
-    " --stop-on-fail               stop analysis once a failed property is detected\n" // NOLINT(*)
-    " --trace                      give a counterexample trace for failed properties\n" //NOLINT(*)
+    " ccover [-?] [-h] [--help]    show help\n"
+    " cccover file.c ...           source file names\n"
     "\n"
     "C/C++ frontend options:\n"
     " -I path                      set include path (C/C++)\n"
@@ -920,10 +893,7 @@ void cbmc_parse_optionst::help()
     " --drop-unused-functions      drop functions trivially unreachable from main function\n" // NOLINT(*)
     "\n"
     "Program instrumentation options:\n"
-    HELP_GOTO_CHECK
-    " --no-assertions              ignore user assertions\n"
     " --no-assumptions             ignore user assumptions\n"
-    " --error-label label          check that label is unreachable\n"
     " --cover CC                   create test-suite with coverage criterion CC\n" // NOLINT(*)
     " --mm MM                      memory consistency model for concurrent programs\n" // NOLINT(*)
     "\n"
@@ -958,7 +928,6 @@ void cbmc_parse_optionst::help()
     "Other options:\n"
     " --version                    show version and exit\n"
     " --xml-ui                     use XML-formatted output\n"
-    " --xml-interface              bi-directional XML interface\n"
     " --json-ui                    use JSON-formatted output\n"
     HELP_GOTO_TRACE
     " --verbosity #                verbosity level\n"
